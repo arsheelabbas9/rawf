@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     });
 
     const mailOptions = {
-      from: `"Foundation Terminal" <${process.env.SMTP_USER}>`, 
+      from:`"Rajab Ali Welfare Foundation" <info@rajabaliwelfarefoundation.org>`,
       replyTo: email, 
       to: process.env.CONTACT_EMAIL, 
       subject: `[Institutional Inquiry] ${subject || 'General Correspondence'}`,
