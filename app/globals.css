@@ -1,26 +1,26 @@
 @import "tailwindcss";
 
+@theme {
+  /* 60% Dominant Blue for headers, backgrounds, and main structure */
+  --color-rawf-blue: #1B4F9B;
+  --color-rawf-blue-light: #2A68C2;
+  --color-rawf-blue-dark: #11366D;
+
+  /* 10% High-Contrast Amber Gold reserved EXCLUSIVELY for Donate buttons */
+  --color-rawf-gold: #D97706;
+  --color-rawf-gold-hover: #B45309;
+
+  /* 10% Heritage Accent from your physical distribution flyer */
+  --color-rawf-maroon: #A5004F;
+
+  /* Soft off-white for modern layout alternating section backgrounds */
+  --color-rawf-light: #F8FAFC;
+
+  /* Bilingual Urdu Font Setting */
+  --font-urdu: "Noto Nastaliq Urdu", serif;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-rawf-light);
+  color: #1e293b; /* slate-800 text for clean reading */
 }
