@@ -39,12 +39,14 @@ const fallbackDict = {
   btn_transmit: "Transmit Inquiry",
   success_title: "Inquiry Verified & Transmitted.",
   success_desc: "Your correspondence has been securely routed to the Rajab Ali Welfare Foundation administration. A representative will review your institutional details and establish contact within 24 operational hours.",
-  success_btn: "Submit Another Inquiry"
+  success_btn: "Submit Another Inquiry",
+  error_desc: "Transmission failed. Please verify your connection or try again."
 };
 
 export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState(false); // New state to handle API errors safely
   const [dict, setDict] = useState<any>(null);
   
   // Next.js 15+ Requirement for Client Components to read the URL safely
@@ -67,13 +69,43 @@ export default function Contact() {
     fetchDictionary();
   }, [locale]);
 
-  const handleTransmit = (event: React.FormEvent) => {
+  // ============================================================================
+  // UPGRADED TRANSMISSION ENGINE
+  // Connects securely to the Brevo API route while preserving the UI state
+  // ============================================================================
+  const handleTransmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSubmitting(true);
-    setTimeout(() => {
+    setSubmitError(false);
+
+    // Extract the precise payload from the monolithic UI fields
+    const formData = new FormData(event.currentTarget);
+    const payload = {
+      name: formData.get('fullName'),
+      email: formData.get('emailAddress'),
+      subject: formData.get('subject'),
+      message: formData.get('message'),
+    };
+
+    try {
+      // Fire the payload to the internal Next.js server
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        setIsSubmitted(true);
+      } else {
+        setSubmitError(true);
+      }
+    } catch (error) {
+      console.error("Frontend Transmission Error:", error);
+      setSubmitError(true);
+    } finally {
       setIsSubmitting(false);
-      setIsSubmitted(true);
-    }, 1500);
+    }
   };
 
   if (!dict) return <div className="min-h-screen bg-white"></div>;
@@ -208,6 +240,14 @@ export default function Contact() {
                     <textarea id="message" name="message" rows={5} disabled={isSubmitting} className="peer w-full bg-transparent border-0 border-b-2 border-slate-200 text-[#0A192F] text-lg py-3 focus:outline-none focus:ring-0 focus:border-[#1B4F9B] transition-colors placeholder-transparent resize-none disabled:opacity-50" placeholder={dict.field_message} required></textarea>
                     <label htmlFor="message" className="absolute left-0 -top-2 text-[10px] uppercase tracking-[0.2em] font-extrabold text-[#475569] transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-slate-400 peer-placeholder-shown:top-5 peer-focus:-top-2 peer-focus:text-[10px] peer-focus:text-[#1B4F9B]">{dict.field_message}</label>
                   </div>
+                  
+                  {/* Real-time Error Rendering */}
+                  {submitError && (
+                    <div className="text-red-500 text-sm font-bold mt-2">
+                      {dict.error_desc || "Transmission failed. Please verify your connection."}
+                    </div>
+                  )}
+
                   <div className="pt-8 relative">
                     <button type="submit" disabled={isSubmitting} className="group inline-flex items-center justify-center gap-4 text-xs uppercase tracking-[0.3em] font-extrabold bg-[#0A192F] text-white px-16 py-6 hover:bg-[#1B4F9B] transition-colors duration-500 w-full md:w-auto shadow-xl disabled:bg-slate-400 disabled:cursor-not-allowed">
                       {isSubmitting ? (
