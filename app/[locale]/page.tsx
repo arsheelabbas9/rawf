@@ -1,9 +1,6 @@
 // app/[locale]/page.tsx
 import Link from 'next/link';
 
-// ============================================================================
-// BULLETPROOF DICTIONARY LOADER WITH GRACEFUL FALLBACKS
-// ============================================================================
 const getHomeDictionary = async (locale: string) => {
   try {
     const dict = locale === 'ur' 
@@ -12,7 +9,6 @@ const getHomeDictionary = async (locale: string) => {
     return dict.home;
   } catch (error) {
     console.error("Dictionary Load Error:", error);
-    // Hardcoded fallback to prevent runtime crashes
     return {
       hero_label: "Rajab Ali Welfare Foundation",
       hero_title_1: "We are all here",
@@ -62,10 +58,11 @@ const getHomeDictionary = async (locale: string) => {
 };
 
 export default async function Home({ 
-  params: { locale } 
+  params 
 }: { 
-  params: { locale: string } 
+  params: Promise<{ locale: string }> 
 }) {
+  const { locale } = await params;
   const dict = await getHomeDictionary(locale);
 
   return (
@@ -73,8 +70,6 @@ export default async function Home({
       
       {/* SECTION 1: ARCHITECTURAL HERO */}
       <section aria-label="Introduction" className="relative min-h-[90vh] flex flex-col justify-center overflow-hidden border-b border-slate-200">
-        
-        {/* Architectural Background Grid Pattern */}
         <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.02]" aria-hidden="true">
           <svg className="absolute w-full h-full" xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -86,17 +81,15 @@ export default async function Home({
           </svg>
         </div>
 
-        {/* Floating Structural Lines */}
         <div className="hidden lg:block absolute left-12 top-0 w-px h-full bg-slate-100 z-0" aria-hidden="true"></div>
         <div className="hidden lg:block absolute right-12 top-0 w-px h-full bg-slate-100 z-0" aria-hidden="true"></div>
         <div className="hidden lg:block absolute left-1/2 top-0 w-px h-[15vh] bg-slate-100 z-0" aria-hidden="true"></div>
 
         <div className="relative z-10 max-w-[85rem] mx-auto px-6 lg:px-16 w-full pt-24 pb-28">
           <div className="flex flex-col items-start max-w-5xl">
-            
             <div className="flex items-center gap-5 mb-14">
               <div className="h-px w-16 bg-[#1B4F9B]" aria-hidden="true"></div>
-              <span className="font-jakarta text-[10px] sm:text-xs uppercase tracking-[0.35em] font-extrabold text-[#1B4F9B]">
+              <span className="text-[10px] sm:text-xs uppercase tracking-[0.35em] font-extrabold text-[#1B4F9B]">
                 {dict.hero_label}
               </span>
             </div>
@@ -114,7 +107,7 @@ export default async function Home({
             
             <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-20 items-center w-full mt-6">
               <div className="md:col-span-7">
-                <p className="font-jakarta text-[#475569] text-base md:text-lg leading-relaxed font-medium">
+                <p className="text-[#475569] text-base md:text-lg leading-relaxed font-medium">
                   {dict.hero_desc}
                 </p>
               </div>
@@ -122,7 +115,7 @@ export default async function Home({
               <div className="md:col-span-5 flex flex-col sm:flex-row gap-5">
                 <Link 
                   href={`/${locale}/donate`}
-                  className="group relative inline-flex justify-center items-center font-jakarta text-[11px] uppercase tracking-[0.2em] font-extrabold bg-[#0A192F] text-white px-9 py-5 overflow-hidden transition-all duration-500 hover:bg-[#1B4F9B] w-full sm:w-auto shadow-sm"
+                  className="group relative inline-flex justify-center items-center text-[11px] uppercase tracking-[0.2em] font-extrabold bg-[#0A192F] text-white px-9 py-5 overflow-hidden transition-all duration-500 hover:bg-[#1B4F9B] w-full sm:w-auto shadow-sm"
                 >
                   <span className="relative z-10 flex items-center gap-3">
                     {dict.btn_donate}
@@ -133,18 +126,17 @@ export default async function Home({
                 </Link>
                 <Link 
                   href={`/${locale}/programs`}
-                  className="group inline-flex justify-center items-center font-jakarta text-[11px] uppercase tracking-[0.2em] font-extrabold bg-transparent text-[#0A192F] border border-[#0A192F] px-9 py-5 hover:bg-[#F8FAFC] transition-colors duration-500 w-full sm:w-auto"
+                  className="group inline-flex justify-center items-center text-[11px] uppercase tracking-[0.2em] font-extrabold bg-transparent text-[#0A192F] border border-[#0A192F] px-9 py-5 hover:bg-[#F8FAFC] transition-colors duration-500 w-full sm:w-auto"
                 >
                   {dict.btn_programs}
                 </Link>
               </div>
             </div>
-
           </div>
         </div>
 
         <div className="absolute bottom-0 right-12 hidden lg:flex flex-col items-center gap-6 z-10 pb-10" aria-hidden="true">
-          <span className="font-jakarta text-[9px] uppercase tracking-[0.4em] font-bold text-[#1B4F9B] transform rotate-90 origin-right translate-x-1/2">
+          <span className="text-[9px] uppercase tracking-[0.4em] font-bold text-[#1B4F9B] transform rotate-90 origin-right translate-x-1/2">
             {dict.scroll}
           </span>
           <div className="w-[1px] h-20 bg-gradient-to-b from-[#1B4F9B] to-transparent"></div>
@@ -166,16 +158,10 @@ export default async function Home({
                   {dict.quote}
                 </blockquote>
                 <figcaption className="flex items-center gap-6">
-                  <div className="w-16 h-16 bg-[#F8FAFC] border border-slate-200 flex items-center justify-center text-[#1B4F9B] font-playfair font-bold text-2xl" aria-hidden="true">
-                    HH
-                  </div>
+                  <div className="w-16 h-16 bg-[#F8FAFC] border border-slate-200 flex items-center justify-center text-[#1B4F9B] font-playfair font-bold text-2xl" aria-hidden="true">HH</div>
                   <div>
-                    <div className="font-jakarta text-sm uppercase tracking-[0.2em] font-extrabold text-[#0A192F]">
-                      {dict.quote_author}
-                    </div>
-                    <div className="font-jakarta text-[10px] text-[#475569] uppercase tracking-[0.15em] mt-1.5 font-bold">
-                      {dict.quote_role}
-                    </div>
+                    <div className="text-sm uppercase tracking-[0.2em] font-extrabold text-[#0A192F]">{dict.quote_author}</div>
+                    <div className="text-[10px] text-[#475569] uppercase tracking-[0.15em] mt-1.5 font-bold">{dict.quote_role}</div>
                   </div>
                 </figcaption>
               </div>
@@ -183,7 +169,7 @@ export default async function Home({
 
             <article className="lg:col-span-7">
               <header className="flex items-center gap-5 mb-12">
-                <h2 id="heritage-heading" className="font-jakarta text-[11px] uppercase tracking-[0.25em] font-extrabold text-[#1B4F9B] whitespace-nowrap">
+                <h2 id="heritage-heading" className="text-[11px] uppercase tracking-[0.25em] font-extrabold text-[#1B4F9B] whitespace-nowrap">
                   {dict.heritage_label}
                 </h2>
                 <div className="h-px w-full bg-slate-100" aria-hidden="true"></div>
@@ -193,7 +179,7 @@ export default async function Home({
                 {dict.heritage_title}
               </h3>
 
-              <div className="prose prose-lg prose-slate max-w-none font-jakarta text-[#475569] leading-[2.2]">
+              <div className="prose prose-lg prose-slate max-w-none text-[#475569] leading-[2.2]">
                 <p className="first-letter:font-playfair first-letter:text-7xl first-letter:font-bold first-letter:text-[#0A192F] first-letter:mr-4 first-letter:mt-2 first-letter:float-left first-line:uppercase first-line:tracking-widest">
                   {dict.heritage_p1}
                 </p>
@@ -208,16 +194,11 @@ export default async function Home({
                   </p>
                 </div>
 
-                <p>
-                  {dict.heritage_p4}
-                </p>
+                <p>{dict.heritage_p4}</p>
               </div>
 
               <div className="mt-16">
-                <Link 
-                  href={`/${locale}/about`}
-                  className="group inline-flex items-center gap-4 font-jakarta text-[11px] uppercase tracking-[0.25em] font-extrabold text-[#0A192F] hover:text-[#1B4F9B] transition-colors pb-3 border-b-2 border-[#0A192F] hover:border-[#1B4F9B]"
-                >
+                <Link href={`/${locale}/about`} className="group inline-flex items-center gap-4 text-[11px] uppercase tracking-[0.25em] font-extrabold text-[#0A192F] hover:text-[#1B4F9B] transition-colors pb-3 border-b-2 border-[#0A192F] hover:border-[#1B4F9B]">
                   {dict.heritage_btn}
                   <svg className="w-5 h-5 transition-transform duration-500 group-hover:translate-x-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -237,44 +218,26 @@ export default async function Home({
             <h2 id="impact-heading" className="font-playfair text-4xl md:text-5xl font-bold text-[#0A192F] mb-6 tracking-tight">
               {dict.impact_title}
             </h2>
-            <p className="font-jakarta text-[#475569] text-base leading-relaxed font-medium">
+            <p className="text-[#475569] text-base leading-relaxed font-medium">
               {dict.impact_desc}
             </p>
           </header>
 
           <dl className="grid grid-cols-1 md:grid-cols-3 gap-0 bg-white border border-slate-200 shadow-sm relative z-10">
             <div className="p-12 md:p-16 border-b md:border-b-0 md:border-r border-slate-200 flex flex-col items-center text-center group">
-              <dt className="order-2 font-jakarta text-[11px] uppercase tracking-[0.25em] font-extrabold text-[#0A192F] mb-3 mt-6">
-                {dict.stat1_label}
-              </dt>
-              <dd className="order-1 font-playfair text-6xl lg:text-7xl font-bold text-[#1B4F9B] transform transition-transform duration-700 group-hover:-translate-y-2">
-                {dict.stat1_val}
-              </dd>
-              <dd className="order-3 font-jakarta text-sm text-slate-500 leading-relaxed font-medium max-w-[200px]">
-                {dict.stat1_desc}
-              </dd>
+              <dt className="order-2 text-[11px] uppercase tracking-[0.25em] font-extrabold text-[#0A192F] mb-3 mt-6">{dict.stat1_label}</dt>
+              <dd className="order-1 font-playfair text-6xl lg:text-7xl font-bold text-[#1B4F9B] transform transition-transform duration-700 group-hover:-translate-y-2">{dict.stat1_val}</dd>
+              <dd className="order-3 text-sm text-slate-500 leading-relaxed font-medium max-w-[200px]">{dict.stat1_desc}</dd>
             </div>
             <div className="p-12 md:p-16 border-b md:border-b-0 md:border-r border-slate-200 flex flex-col items-center text-center group">
-              <dt className="order-2 font-jakarta text-[11px] uppercase tracking-[0.25em] font-extrabold text-[#0A192F] mb-3 mt-6">
-                {dict.stat2_label}
-              </dt>
-              <dd className="order-1 font-playfair text-6xl lg:text-7xl font-bold text-[#1B4F9B] transform transition-transform duration-700 group-hover:-translate-y-2">
-                {dict.stat2_val}
-              </dd>
-              <dd className="order-3 font-jakarta text-sm text-slate-500 leading-relaxed font-medium max-w-[200px]">
-                {dict.stat2_desc}
-              </dd>
+              <dt className="order-2 text-[11px] uppercase tracking-[0.25em] font-extrabold text-[#0A192F] mb-3 mt-6">{dict.stat2_label}</dt>
+              <dd className="order-1 font-playfair text-6xl lg:text-7xl font-bold text-[#1B4F9B] transform transition-transform duration-700 group-hover:-translate-y-2">{dict.stat2_val}</dd>
+              <dd className="order-3 text-sm text-slate-500 leading-relaxed font-medium max-w-[200px]">{dict.stat2_desc}</dd>
             </div>
             <div className="p-12 md:p-16 flex flex-col items-center text-center group">
-              <dt className="order-2 font-jakarta text-[11px] uppercase tracking-[0.25em] font-extrabold text-[#0A192F] mb-3 mt-6">
-                {dict.stat3_label}
-              </dt>
-              <dd className="order-1 font-playfair text-6xl lg:text-7xl font-bold text-[#1B4F9B] transform transition-transform duration-700 group-hover:-translate-y-2">
-                {dict.stat3_val}
-              </dd>
-              <dd className="order-3 font-jakarta text-sm text-slate-500 leading-relaxed font-medium max-w-[200px]">
-                {dict.stat3_desc}
-              </dd>
+              <dt className="order-2 text-[11px] uppercase tracking-[0.25em] font-extrabold text-[#0A192F] mb-3 mt-6">{dict.stat3_label}</dt>
+              <dd className="order-1 font-playfair text-6xl lg:text-7xl font-bold text-[#1B4F9B] transform transition-transform duration-700 group-hover:-translate-y-2">{dict.stat3_val}</dd>
+              <dd className="order-3 text-sm text-slate-500 leading-relaxed font-medium max-w-[200px]">{dict.stat3_desc}</dd>
             </div>
           </dl>
         </div>
@@ -283,12 +246,11 @@ export default async function Home({
       {/* SECTION 4: PROGRAMS */}
       <section aria-labelledby="programs-heading" className="py-32 md:py-40 bg-white">
         <div className="max-w-[85rem] mx-auto px-6 lg:px-16">
-          
           <header className="flex flex-col md:flex-row justify-between items-end mb-20 gap-10">
             <div className="max-w-2xl">
               <div className="flex items-center gap-5 mb-8">
                 <div className="h-px w-12 bg-[#1B4F9B]" aria-hidden="true"></div>
-                <h2 id="programs-heading" className="font-jakarta text-[10px] sm:text-[11px] uppercase tracking-[0.3em] font-extrabold text-[#1B4F9B]">
+                <h2 id="programs-heading" className="text-[10px] sm:text-[11px] uppercase tracking-[0.3em] font-extrabold text-[#1B4F9B]">
                   {dict.pillars_label}
                 </h2>
               </div>
@@ -296,10 +258,7 @@ export default async function Home({
                 {dict.pillars_title}
               </p>
             </div>
-            <Link 
-              href={`/${locale}/programs`}
-              className="hidden md:inline-flex items-center gap-4 font-jakarta text-[11px] uppercase tracking-[0.25em] font-extrabold text-[#0A192F] hover:text-[#1B4F9B] transition-colors whitespace-nowrap group"
-            >
+            <Link href={`/${locale}/programs`} className="hidden md:inline-flex items-center gap-4 text-[11px] uppercase tracking-[0.25em] font-extrabold text-[#0A192F] hover:text-[#1B4F9B] transition-colors whitespace-nowrap group">
               {dict.pillars_btn}
               <svg className="w-5 h-5 transition-transform duration-500 group-hover:translate-x-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -308,58 +267,44 @@ export default async function Home({
           </header>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-            
             <article className="group border border-slate-200 bg-white p-10 lg:p-12 hover:border-[#1B4F9B] transition-colors duration-700 relative overflow-hidden flex flex-col h-full shadow-sm hover:shadow-md">
               <div className="absolute top-0 left-0 w-full h-1.5 bg-[#1B4F9B] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-700 ease-out" aria-hidden="true"></div>
               <div className="w-16 h-16 bg-[#F8FAFC] border border-slate-100 flex items-center justify-center mb-10 text-[#1B4F9B]">
-                <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
-                </svg>
+                <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
               </div>
               <h3 className="font-playfair text-[1.75rem] font-bold text-[#0A192F] mb-5 tracking-tight leading-snug">{dict.prog1_title}</h3>
-              <p className="font-jakarta text-sm text-[#475569] leading-[1.8] mb-10 flex-grow font-medium">{dict.prog1_desc}</p>
-              <Link href={`/${locale}/academy`} className="mt-auto inline-flex items-center gap-3 font-jakarta text-[10px] uppercase tracking-[0.2em] font-extrabold text-[#1B4F9B] group-hover:text-[#0A192F] transition-colors w-fit">
+              <p className="text-sm text-[#475569] leading-[1.8] mb-10 flex-grow font-medium">{dict.prog1_desc}</p>
+              <Link href={`/${locale}/academy`} className="mt-auto inline-flex items-center gap-3 text-[10px] uppercase tracking-[0.2em] font-extrabold text-[#1B4F9B] group-hover:text-[#0A192F] transition-colors w-fit">
                 {dict.prog1_btn}
-                <svg className="w-4 h-4 transform transition-transform duration-500 group-hover:translate-x-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
+                <svg className="w-4 h-4 transform transition-transform duration-500 group-hover:translate-x-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
               </Link>
             </article>
 
             <article className="group border border-slate-200 bg-white p-10 lg:p-12 hover:border-[#1B4F9B] transition-colors duration-700 relative overflow-hidden flex flex-col h-full shadow-sm hover:shadow-md">
               <div className="absolute top-0 left-0 w-full h-1.5 bg-[#1B4F9B] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-700 ease-out" aria-hidden="true"></div>
               <div className="w-16 h-16 bg-[#F8FAFC] border border-slate-100 flex items-center justify-center mb-10 text-[#1B4F9B]">
-                <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 10.5h.375c.621 0 1.125.504 1.125 1.125v2.25c0 .621-.504 1.125-1.125 1.125H21M4.5 10.5v5.625c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V10.5M4.5 10.5h15M4.5 10.5H3.375c-.621 0-1.125.504-1.125 1.125v2.25c0 .621.504 1.125 1.125 1.125H4.5m15 0V15" />
-                </svg>
+                <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21 10.5h.375c.621 0 1.125.504 1.125 1.125v2.25c0 .621-.504 1.125-1.125 1.125H21M4.5 10.5v5.625c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V10.5M4.5 10.5h15M4.5 10.5H3.375c-.621 0-1.125.504-1.125 1.125v2.25c0 .621.504 1.125 1.125 1.125H4.5m15 0V15" /></svg>
               </div>
               <h3 className="font-playfair text-[1.75rem] font-bold text-[#0A192F] mb-5 tracking-tight leading-snug">{dict.prog2_title}</h3>
-              <p className="font-jakarta text-sm text-[#475569] leading-[1.8] mb-10 flex-grow font-medium">{dict.prog2_desc}</p>
-              <Link href={`/${locale}/programs`} className="mt-auto inline-flex items-center gap-3 font-jakarta text-[10px] uppercase tracking-[0.2em] font-extrabold text-[#1B4F9B] group-hover:text-[#0A192F] transition-colors w-fit">
+              <p className="text-sm text-[#475569] leading-[1.8] mb-10 flex-grow font-medium">{dict.prog2_desc}</p>
+              <Link href={`/${locale}/programs`} className="mt-auto inline-flex items-center gap-3 text-[10px] uppercase tracking-[0.2em] font-extrabold text-[#1B4F9B] group-hover:text-[#0A192F] transition-colors w-fit">
                 {dict.prog2_btn}
-                <svg className="w-4 h-4 transform transition-transform duration-500 group-hover:translate-x-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
+                <svg className="w-4 h-4 transform transition-transform duration-500 group-hover:translate-x-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
               </Link>
             </article>
 
             <article className="group border border-slate-200 bg-white p-10 lg:p-12 hover:border-[#1B4F9B] transition-colors duration-700 relative overflow-hidden flex flex-col h-full shadow-sm hover:shadow-md">
               <div className="absolute top-0 left-0 w-full h-1.5 bg-[#1B4F9B] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-700 ease-out" aria-hidden="true"></div>
               <div className="w-16 h-16 bg-[#F8FAFC] border border-slate-100 flex items-center justify-center mb-10 text-[#1B4F9B]">
-                <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.031.352 5.988 5.988 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.971zm-16.5.52c.99-.203 1.99-.377 3-.52m0 0l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.989 5.989 0 01-2.031.352 5.989 5.989 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L5.25 4.971z" />
-                </svg>
+                <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.031.352 5.988 5.988 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.971zm-16.5.52c.99-.203 1.99-.377 3-.52m0 0l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.989 5.989 0 01-2.031.352 5.989 5.989 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L5.25 4.971z" /></svg>
               </div>
               <h3 className="font-playfair text-[1.75rem] font-bold text-[#0A192F] mb-5 tracking-tight leading-snug">{dict.prog3_title}</h3>
-              <p className="font-jakarta text-sm text-[#475569] leading-[1.8] mb-10 flex-grow font-medium">{dict.prog3_desc}</p>
-              <Link href={`/${locale}/donate`} className="mt-auto inline-flex items-center gap-3 font-jakarta text-[10px] uppercase tracking-[0.2em] font-extrabold text-[#1B4F9B] group-hover:text-[#0A192F] transition-colors w-fit">
+              <p className="text-sm text-[#475569] leading-[1.8] mb-10 flex-grow font-medium">{dict.prog3_desc}</p>
+              <Link href={`/${locale}/donate`} className="mt-auto inline-flex items-center gap-3 text-[10px] uppercase tracking-[0.2em] font-extrabold text-[#1B4F9B] group-hover:text-[#0A192F] transition-colors w-fit">
                 {dict.prog3_btn}
-                <svg className="w-4 h-4 transform transition-transform duration-500 group-hover:translate-x-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
+                <svg className="w-4 h-4 transform transition-transform duration-500 group-hover:translate-x-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
               </Link>
             </article>
-
           </div>
         </div>
       </section>

@@ -10,9 +10,7 @@ const getAboutDictionary = async (locale: string) => {
     const dict = locale === 'ur' 
       ? (await import('../../../dictionaries/ur.json')).default 
       : (await import('../../../dictionaries/en.json')).default;
-    // Some dictionary JSON files may export the localized sections at the root
-    // or under an "about" key. Tolerate both shapes to avoid runtime/TS errors.
-    return (dict as any).about ?? dict;
+    return dict.about;
   } catch (error) {
     console.error("Dictionary Load Error:", error);
     // Hardcoded fallback to prevent runtime crashes during translation updates
@@ -68,14 +66,14 @@ const getAboutDictionary = async (locale: string) => {
 
 // ============================================================================
 // ASYNC PAGE COMPONENT
-// Dynamically receives the locale parameter from the Next.js App Router
+// Next.js 15+ Requirement: 'params' must be awaited
 // ============================================================================
 export default async function About({ 
-  params: { locale } 
+  params 
 }: { 
-  params: { locale: string } 
+  params: Promise<{ locale: string }> 
 }) {
-  // Fetch the localized text payload
+  const { locale } = await params;
   const dict = await getAboutDictionary(locale);
 
   return (
@@ -372,6 +370,7 @@ export default async function About({
                 <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
             </Link>
+            {/* i18n ROUTING: Dynamic Locale injected into the URL parameter */}
             <Link 
               href={`/${locale}/programs`}
               className="font-jakarta text-xs uppercase tracking-[0.2em] font-extrabold bg-transparent text-[#0A192F] border border-[#0A192F] px-12 py-5 hover:bg-white transition-colors duration-500"

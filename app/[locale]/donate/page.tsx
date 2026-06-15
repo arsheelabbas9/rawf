@@ -2,10 +2,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
 
-// ============================================================================
-// BULLETPROOF DICTIONARY LOADER WITH GRACEFUL FALLBACKS
-// Protects the server-side render from crashing if JSON keys are missing.
-// ============================================================================
 const getDonateDictionary = async (locale: string) => {
   try {
     const dict = locale === 'ur' 
@@ -14,7 +10,6 @@ const getDonateDictionary = async (locale: string) => {
     return dict.donate;
   } catch (error) {
     console.error("Dictionary Load Error:", error);
-    // Hardcoded fallback to prevent runtime crashes
     return {
       hero_label: "Support Our Mission",
       hero_title_1: "Your contribution drives",
@@ -60,33 +55,25 @@ const getDonateDictionary = async (locale: string) => {
   }
 };
 
-// ============================================================================
-// ASYNC PAGE COMPONENT
-// Dynamically receives the locale parameter from the Next.js App Router
-// ============================================================================
 export default async function Donate({ 
-  params: { locale } 
+  params 
 }: { 
-  params: { locale: string } 
+  params: Promise<{ locale: string }> 
 }) {
-  // Fetch the localized text payload
+  const { locale } = await params;
   const dict = await getDonateDictionary(locale);
 
   return (
     <main className="w-full bg-white selection:bg-[#1B4F9B] selection:text-white flex flex-col min-h-screen">
       
-      {/* =======================================================================
-        SECTION 1: PAGE HEADER
-        Minimalist, high-impact introductory section.
-        =======================================================================
-      */}
+      {/* SECTION 1: PAGE HEADER */}
       <section className="relative pt-24 pb-16 md:pt-32 md:pb-24 border-b border-slate-200 bg-[#F8FAFC]">
         <div className="absolute top-0 left-1/2 w-px h-full bg-slate-200 transform -translate-x-1/2 hidden lg:block" aria-hidden="true"></div>
         <div className="max-w-[85rem] mx-auto px-6 lg:px-16 relative z-10">
           <div className="max-w-4xl">
             <div className="flex items-center gap-5 mb-8">
               <div className="h-px w-12 bg-[#1B4F9B]" aria-hidden="true"></div>
-              <span className="font-jakarta text-[11px] uppercase tracking-[0.3em] font-extrabold text-[#1B4F9B]">
+              <span className="text-[11px] uppercase tracking-[0.3em] font-extrabold text-[#1B4F9B]">
                 {dict.hero_label}
               </span>
             </div>
@@ -94,18 +81,14 @@ export default async function Donate({
               {dict.hero_title_1} <br className="hidden md:block" />
               <span className="text-[#1B4F9B]">{dict.hero_title_2}</span>
             </h1>
-            <p className="font-jakarta text-[#475569] text-base md:text-lg leading-relaxed font-medium max-w-2xl">
+            <p className="text-[#475569] text-base md:text-lg leading-relaxed font-medium max-w-2xl">
               {dict.hero_desc}
             </p>
           </div>
         </div>
       </section>
 
-      {/* =======================================================================
-        SECTION 2: SECURE TRANSFER TERMINALS & PROTOCOL
-        The core financial data presented with institutional fidelity.
-        =======================================================================
-      */}
+      {/* SECTION 2: SECURE TRANSFER TERMINALS & PROTOCOL */}
       <section className="py-24 md:py-32 bg-white relative">
         <div className="max-w-[85rem] mx-auto px-6 lg:px-16">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
@@ -113,7 +96,7 @@ export default async function Donate({
             {/* Left Column: The Banking & Wallet Terminals */}
             <div className="lg:col-span-7">
               <div className="flex items-center gap-4 mb-10">
-                <h2 className="font-jakarta text-[11px] uppercase tracking-[0.25em] font-extrabold text-[#0A192F]">
+                <h2 className="text-[11px] uppercase tracking-[0.25em] font-extrabold text-[#0A192F]">
                   {dict.term_label}
                 </h2>
                 <div className="h-px flex-grow bg-slate-100" aria-hidden="true"></div>
@@ -127,7 +110,7 @@ export default async function Donate({
                   <div className="flex items-start justify-between mb-10 border-b border-slate-100 pb-8">
                     <div>
                       <h3 className="font-playfair text-3xl font-bold text-[#0A192F] tracking-tight mb-2">{dict.bank_title}</h3>
-                      <p className="font-jakarta text-xs uppercase tracking-[0.15em] text-slate-400 font-bold">{dict.bank_branch}</p>
+                      <p className="text-xs uppercase tracking-[0.15em] text-slate-400 font-bold">{dict.bank_branch}</p>
                     </div>
                     <div className="w-12 h-12 bg-[#F8FAFC] border border-slate-100 flex items-center justify-center text-[#1B4F9B]">
                       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -138,12 +121,11 @@ export default async function Donate({
 
                   <dl className="space-y-8">
                     <div>
-                      <dt className="font-jakarta text-[10px] uppercase tracking-[0.2em] font-extrabold text-[#475569] mb-2">{dict.bank_acc_label}</dt>
-                      <dd className="font-jakarta text-lg md:text-xl font-bold text-[#0A192F]">{dict.bank_acc_name}</dd>
+                      <dt className="text-[10px] uppercase tracking-[0.2em] font-extrabold text-[#475569] mb-2">{dict.bank_acc_label}</dt>
+                      <dd className="text-lg md:text-xl font-bold text-[#0A192F]">{dict.bank_acc_name}</dd>
                     </div>
-                    
                     <div>
-                      <dt className="font-jakarta text-[10px] uppercase tracking-[0.2em] font-extrabold text-[#475569] mb-3">{dict.bank_iban_label}</dt>
+                      <dt className="text-[10px] uppercase tracking-[0.2em] font-extrabold text-[#475569] mb-3">{dict.bank_iban_label}</dt>
                       <dd className="relative">
                         <div className="font-mono text-base md:text-xl font-bold text-[#1B4F9B] bg-[#F8FAFC] border border-slate-200 p-5 md:p-6 tracking-[0.1em] break-all">
                           {dict.bank_iban}
@@ -162,7 +144,7 @@ export default async function Donate({
                   <div className="flex items-start justify-between mb-8 border-b border-slate-100 pb-6">
                     <div>
                       <h3 className="font-playfair text-2xl font-bold text-[#0A192F] tracking-tight mb-2">{dict.wallet_title}</h3>
-                      <p className="font-jakarta text-xs uppercase tracking-[0.15em] text-slate-400 font-bold">{dict.wallet_subtitle}</p>
+                      <p className="text-xs uppercase tracking-[0.15em] text-slate-400 font-bold">{dict.wallet_subtitle}</p>
                     </div>
                     <div className="w-12 h-12 bg-[#F8FAFC] border border-slate-100 flex items-center justify-center text-[#0A192F]">
                       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -171,40 +153,25 @@ export default async function Donate({
                     </div>
                   </div>
 
-                  {/* Unified Wallet Layout */}
                   <div className="flex flex-col gap-6">
-                    
-                    {/* Supported Providers Logos */}
                     <div className="flex items-center gap-6 pb-2">
-                      <span className="font-jakarta text-[10px] uppercase tracking-[0.2em] font-extrabold text-slate-400">
+                      <span className="text-[10px] uppercase tracking-[0.2em] font-extrabold text-slate-400">
                         {dict.wallet_platforms}
                       </span>
                       <div className="flex items-center gap-5">
-                        <Image 
-                          src="/Easypaisa.webp" 
-                          alt="EasyPaisa" 
-                          width={100} 
-                          height={35} 
-                          className="object-contain h-6 w-auto"
-                        />
-                        <Image 
-                          src="/sadapay.png" 
-                          alt="SadaPay" 
-                          width={100} 
-                          height={35} 
-                          className="object-contain h-7 w-auto"
-                        />
+                        <Image src="/Easypaisa.webp" alt="EasyPaisa" width={100} height={35} className="object-contain h-6 w-auto" />
+                        <Image src="/sadapay.png" alt="SadaPay" width={100} height={35} className="object-contain h-7 w-auto" />
                       </div>
                     </div>
 
                     <dl>
-                      <dt className="font-jakarta text-[10px] uppercase tracking-[0.2em] font-extrabold text-[#475569] mb-3">{dict.wallet_acc_label}</dt>
+                      <dt className="text-[10px] uppercase tracking-[0.2em] font-extrabold text-[#475569] mb-3">{dict.wallet_acc_label}</dt>
                       <dd className="relative">
                         <div className="font-mono text-xl md:text-2xl font-bold text-[#0A192F] bg-[#F8FAFC] border border-slate-200 p-5 md:p-6 tracking-[0.2em]">
                           {dict.wallet_acc_num}
                         </div>
                       </dd>
-                      <dd className="font-jakarta text-xs text-slate-500 font-semibold mt-4 flex items-center gap-2">
+                      <dd className="text-xs text-slate-500 font-semibold mt-4 flex items-center gap-2">
                         <span className="uppercase tracking-[0.1em]">{dict.wallet_title_label}</span> 
                         <span className="text-[#0A192F] font-bold">{dict.wallet_title_name}</span>
                       </dd>
@@ -212,7 +179,6 @@ export default async function Donate({
                   </div>
                 </div>
               </div>
-
             </div>
 
             {/* Right Column: The Verification Pipeline */}
@@ -221,44 +187,40 @@ export default async function Donate({
                 <h2 className="font-playfair text-3xl font-bold text-[#0A192F] mb-8 tracking-tight">
                   {dict.verify_title}
                 </h2>
-                <p className="font-jakarta text-[#475569] text-sm leading-relaxed mb-12 font-medium">
+                <p className="text-[#475569] text-sm leading-relaxed mb-12 font-medium">
                   {dict.verify_desc}
                 </p>
 
                 <div className="space-y-10 relative">
-                  {/* Connecting Line */}
                   <div className="absolute left-[15px] top-2 bottom-2 w-px bg-slate-100 -z-10" aria-hidden="true"></div>
                   
-                  {/* Step 1 */}
                   <div className="flex gap-6 relative">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-white border-2 border-[#1B4F9B] flex items-center justify-center font-jakarta text-[10px] font-extrabold text-[#1B4F9B]">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-white border-2 border-[#1B4F9B] flex items-center justify-center text-[10px] font-extrabold text-[#1B4F9B]">
                       {dict.step1_num}
                     </div>
                     <div>
-                      <h4 className="font-jakarta text-sm uppercase tracking-[0.15em] font-extrabold text-[#0A192F] mb-2">{dict.step1_title}</h4>
-                      <p className="font-jakarta text-sm text-slate-500 leading-relaxed">{dict.step1_desc}</p>
+                      <h4 className="text-sm uppercase tracking-[0.15em] font-extrabold text-[#0A192F] mb-2">{dict.step1_title}</h4>
+                      <p className="text-sm text-slate-500 leading-relaxed">{dict.step1_desc}</p>
                     </div>
                   </div>
 
-                  {/* Step 2 */}
                   <div className="flex gap-6 relative">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-white border-2 border-[#1B4F9B] flex items-center justify-center font-jakarta text-[10px] font-extrabold text-[#1B4F9B]">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-white border-2 border-[#1B4F9B] flex items-center justify-center text-[10px] font-extrabold text-[#1B4F9B]">
                       {dict.step2_num}
                     </div>
                     <div>
-                      <h4 className="font-jakarta text-sm uppercase tracking-[0.15em] font-extrabold text-[#0A192F] mb-2">{dict.step2_title}</h4>
-                      <p className="font-jakarta text-sm text-slate-500 leading-relaxed">{dict.step2_desc}</p>
+                      <h4 className="text-sm uppercase tracking-[0.15em] font-extrabold text-[#0A192F] mb-2">{dict.step2_title}</h4>
+                      <p className="text-sm text-slate-500 leading-relaxed">{dict.step2_desc}</p>
                     </div>
                   </div>
 
-                  {/* Step 3 */}
                   <div className="flex gap-6 relative">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#1B4F9B] flex items-center justify-center font-jakarta text-[10px] font-extrabold text-white shadow-md">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#1B4F9B] flex items-center justify-center text-[10px] font-extrabold text-white shadow-md">
                       {dict.step3_num}
                     </div>
                     <div className="w-full">
-                      <h4 className="font-jakarta text-sm uppercase tracking-[0.15em] font-extrabold text-[#0A192F] mb-2">{dict.step3_title}</h4>
-                      <p className="font-jakarta text-sm text-slate-500 leading-relaxed mb-6">{dict.step3_desc}</p>
+                      <h4 className="text-sm uppercase tracking-[0.15em] font-extrabold text-[#0A192F] mb-2">{dict.step3_title}</h4>
+                      <p className="text-sm text-slate-500 leading-relaxed mb-6">{dict.step3_desc}</p>
                       
                       <a 
                         href="https://wa.me/923352745614?text=Salam%20Haji%20Hussain,%20I%20have%20just%20made%20a%20donation%20to%20the%20Rajab%20Ali%20Welfare%20Foundation." 
@@ -283,56 +245,35 @@ export default async function Donate({
         </div>
       </section>
 
-      {/* =======================================================================
-        SECTION 3: FUND ALLOCATION CATEGORIES
-        Grid outlining exactly where donor money can be directed.
-        =======================================================================
-      */}
+      {/* SECTION 3: FUND ALLOCATION CATEGORIES */}
       <section className="py-24 md:py-32 bg-[#F8FAFC] border-t border-slate-200">
         <div className="max-w-[85rem] mx-auto px-6 lg:px-16">
           <header className="text-center max-w-3xl mx-auto mb-20">
             <h2 className="font-playfair text-3xl md:text-5xl font-bold text-[#0A192F] mb-6 tracking-tight">
               {dict.alloc_title}
             </h2>
-            <p className="font-jakarta text-[#475569] text-base leading-relaxed font-medium">
+            <p className="text-[#475569] text-base leading-relaxed font-medium">
               {dict.alloc_desc}
             </p>
           </header>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            
-            {/* Category 1: Zakat */}
             <div className="bg-white border border-slate-200 p-8 group hover:border-[#1B4F9B] transition-colors duration-500">
               <h3 className="font-playfair text-xl font-bold text-[#0A192F] mb-3">{dict.cat1_title}</h3>
-              <p className="font-jakarta text-xs text-slate-500 leading-relaxed font-medium">
-                {dict.cat1_desc}
-              </p>
+              <p className="text-xs text-slate-500 leading-relaxed font-medium">{dict.cat1_desc}</p>
             </div>
-
-            {/* Category 2: Rations */}
             <div className="bg-white border border-slate-200 p-8 group hover:border-[#1B4F9B] transition-colors duration-500">
               <h3 className="font-playfair text-xl font-bold text-[#0A192F] mb-3">{dict.cat2_title}</h3>
-              <p className="font-jakarta text-xs text-slate-500 leading-relaxed font-medium">
-                {dict.cat2_desc}
-              </p>
+              <p className="text-xs text-slate-500 leading-relaxed font-medium">{dict.cat2_desc}</p>
             </div>
-
-            {/* Category 3: Education */}
             <div className="bg-white border border-slate-200 p-8 group hover:border-[#1B4F9B] transition-colors duration-500">
               <h3 className="font-playfair text-xl font-bold text-[#0A192F] mb-3">{dict.cat3_title}</h3>
-              <p className="font-jakarta text-xs text-slate-500 leading-relaxed font-medium">
-                {dict.cat3_desc}
-              </p>
+              <p className="text-xs text-slate-500 leading-relaxed font-medium">{dict.cat3_desc}</p>
             </div>
-
-            {/* Category 4: General Sadqah */}
             <div className="bg-white border border-slate-200 p-8 group hover:border-[#1B4F9B] transition-colors duration-500">
               <h3 className="font-playfair text-xl font-bold text-[#0A192F] mb-3">{dict.cat4_title}</h3>
-              <p className="font-jakarta text-xs text-slate-500 leading-relaxed font-medium">
-                {dict.cat4_desc}
-              </p>
+              <p className="text-xs text-slate-500 leading-relaxed font-medium">{dict.cat4_desc}</p>
             </div>
-
           </div>
         </div>
       </section>
